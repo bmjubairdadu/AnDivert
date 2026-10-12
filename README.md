@@ -44,8 +44,6 @@ so existing WinDivert knowledge transfers directly.
 ✅ per-app firewalls · DNS/ad filtering · traffic monitors & loggers
 ✅ VPN & tunneling apps · network debugging & research · parental controls
 
-❌ Not for cheating in online games, attacking, or surveilling others —
-see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 | | WinDivert (Windows) | AnDivert (Android) |
 |---|---|---|
