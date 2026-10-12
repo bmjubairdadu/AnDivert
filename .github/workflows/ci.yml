@@ -35,11 +35,11 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
 
       - name: Build library (Gradle, CMake + NDK)
-        run: |
-          gradle wrapper --gradle-version 8.7 || true
-          ./gradlew :andivert:assembleRelease --no-daemon
+        run: ./gradlew :andivert:assembleRelease --no-daemon
 
       - name: Package release artifacts
         run: python tools/build_release.py || echo "host packaging skipped; gradle AAR is in andivert/build/outputs/aar/"
@@ -69,7 +69,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Accept SDK licenses
+        uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
 
       - name: Build release AAR
         run: ./gradlew :andivert:assembleRelease --no-daemon

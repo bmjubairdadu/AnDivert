@@ -50,8 +50,12 @@ static int ad_jni_protect(int fd)
         return 0;   /* nothing to protect against (host/unit tests) */
 
     if ((*g_vm)->GetEnv(g_vm, (void **)&env, JNI_VERSION_1_6) == JNI_EDETACHED) {
-        if ((*g_vm)->AttachCurrentThread(g_vm, &env, NULL) != JNI_OK)
+        /* JDK's AttachCurrentThread takes JNIEnv**, Android's takes void**;
+           cast through void* to satisfy both. */
+        void *penv = NULL;
+        if ((*g_vm)->AttachCurrentThread(g_vm, &penv, NULL) != JNI_OK)
             return -1;
+        env = (JNIEnv *)penv;
         attached = 1;
     }
     ok = (*env)->CallBooleanMethod(env, g_vpn_protect_target, g_protect_mid, (jint)fd);
