@@ -2,6 +2,25 @@
 
 All notable changes to AnDivert are documented here.
 
+## [1.0.1] - 2026-10-12
+
+### Fixed
+- JNI bridge: `AttachCurrentThread` signature incompatibility between host
+  JDK headers (`JNIEnv**`) and Android NDK (`void**`) — now compiles
+  cleanly with both.
+- CI pipeline: fully green (engine live tests + Gradle AAR build),
+  `gradlew` executable bit restored, script line-ending normalization via
+  `.gitattributes`.
+
+### Changed
+- `kotlin-stdlib` is now exposed as an `api` dependency — plain-Java
+  consumers get it transitively.
+- AAR rebuilt with all fixes (previous v1.0.0 AAR contained the JNI bug).
+
+### Added
+- Repository polish: badges, CONTRIBUTING with acceptable-use policy,
+  issue templates, roadmap.
+
 ## [1.0.0] - 2026-10-12
 
 Initial release.
