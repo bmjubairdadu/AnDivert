@@ -42,12 +42,17 @@ if ! "$BUILD/ad_test" 2>/dev/null | tail -3; then
 fi
 
 echo "== 4. syntax-check Kotlin =="
-if command -v kotlinc >/dev/null 2>&1; then
-    kotlinc -classpath "$ANDROID_JAR" -d /tmp/andivert-classes \
+# kotlinc (if present) needs the Android SDK's android.jar for our imports.
+AJ="${ANDROID_JAR:-}"
+if [ -z "$AJ" ] && [ -n "$ANDROID_HOME" ]; then
+    AJ=$(ls "$ANDROID_HOME"/platforms/android-3*/android.jar 2>/dev/null | sort -V | tail -1)
+fi
+if command -v kotlinc >/dev/null 2>&1 && [ -n "$AJ" ] && [ -f "$AJ" ]; then
+    kotlinc -classpath "$AJ" -d /tmp/andivert-classes \
         andivert/src/main/java/com/andivert/library/*.kt
     echo "kotlinc OK"
 else
-    echo "kotlinc not found; skipping (validated in dev environment)"
+    echo "kotlinc or android.jar not available; Kotlin is validated by the Android build job"
 fi
 
 echo "== ALL DONE =="
