@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- AnDivert is a library: it adds no permissions and no components.
+         Consumers declare INTERNET / FOREGROUND_SERVICE in their own
+         manifest and register THEIR subclass of AnDivertVpnService, e.g.:
+
+         <service android:name=".MyGate"
+             android:exported="false"
+             android:permission="android.permission.BIND_VPN_SERVICE">
+             <intent-filter>
+                 <action android:name="android.net.VpnService" />
+             </intent-filter>
+         </service>
+    -->
+</manifest>

@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.andivert.library'
+    compileSdk 34
+    ndkVersion '26.3.11579264'
+
+    defaultConfig {
+        minSdk 24
+        consumerProguardFiles 'consumer-rules.pro'
+
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+                arguments '-DANDROID_STL=c++_static'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
+            version '3.22.1'
+        }
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.annotation:annotation:1.8.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'io.github.andivert'
+                artifactId = 'andivert'
+                version = '1.0.0'
+
+                pom {
+                    name = 'AnDivert'
+                    description = 'WinDivert-style user-mode packet interception library for Android (VpnService/TUN based).'
+                    url = 'https://github.com/YOUR_USERNAME/AnDivert'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'YOUR_GITHUB_ID'
+                            name = 'Your Name'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:github.com/YOUR_USERNAME/AnDivert.git'
+                        developerConnection = 'scm:git:ssh://github.com/YOUR_USERNAME/AnDivert.git'
+                        url = 'https://github.com/YOUR_USERNAME/AnDivert'
+                    }
+                }
+            }
+        }
+    }
+}

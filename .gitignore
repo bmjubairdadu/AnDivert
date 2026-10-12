@@ -1,0 +1,26 @@
+# Build outputs
+build/
+dist/classes/
+.aar-stage/
+.zig-cache/
+.gradle/
+.cxx/
+.zwork/
+
+# Toolchains fetched locally for development (not part of the repo)
+.ndk/
+.ndk-download.zip
+.kotlinc/
+.kotlinc.zip
+.kotlinc-out.txt
+.kotlinc-err.txt
+
+# IDE
+.idea/
+*.iml
+.vscode/
+local.properties
+
+# OS
+Thumbs.db
+.DS_Store

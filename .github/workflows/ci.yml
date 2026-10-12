@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  test:
+    name: Build & live-test engine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install JDK (for jni.h)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build + live tests
+        run: bash tools/ci_build_and_test.sh
+
+  android:
+    name: Android build (all ABIs + AAR)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build library (Gradle, CMake + NDK)
+        run: |
+          gradle wrapper --gradle-version 8.7 || true
+          ./gradlew :andivert:assembleRelease --no-daemon
+
+      - name: Package release artifacts
+        run: python tools/build_release.py || echo "host packaging skipped; gradle AAR is in andivert/build/outputs/aar/"
+
+      - name: Upload AAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: andivert-aar
+          path: |
+            andivert/build/outputs/aar/*.aar
+            dist/*.aar
+            dist/*.zip
+          if-no-files-found: warn
+
+  release:
+    name: GitHub Release
+    needs: [ test, android ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK + SDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+
+      - name: Build release AAR
+        run: ./gradlew :andivert:assembleRelease --no-daemon
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p relout
+          cp andivert/build/outputs/aar/andivert-release.aar relout/andivert-${GITHUB_REF_NAME#v}.aar || true
+          cp dist/andivert-*.zip relout/ || true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: relout/*
+          generate_release_notes: true
