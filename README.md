@@ -33,6 +33,20 @@ divert.close()
 
 ## Why it exists
 
+Android does not allow apps to install kernel drivers, so there was no way
+to do WinDivert-style packet work in a normal app. AnDivert fills that gap
+using the platform-sanctioned VpnService/TUN mechanism — the same approach
+as NetGuard and PCAPdroid — but exposes it through a **WinDivert-shaped API**
+so existing WinDivert knowledge transfers directly.
+
+### Legitimate uses
+
+✅ per-app firewalls · DNS/ad filtering · traffic monitors & loggers
+✅ VPN & tunneling apps · network debugging & research · parental controls
+
+❌ Not for cheating in online games, attacking, or surveilling others —
+see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 | | WinDivert (Windows) | AnDivert (Android) |
 |---|---|---|
 | Interception point | `WinDivert.sys` WFP callout driver | VpnService-created TUN interface |
@@ -284,6 +298,19 @@ forwarding stack with zero drops.
 - **VPN consent**: the user sees Android's standard "connection request"
   dialog once per app — that is the platform's price for no-root, and it is
   exactly what NetGuard/PCAPdroid users already expect.
+
+## Roadmap
+
+- [x] Filter engine, checksums, divert loop, UDP NAT, TCP mini-proxy
+- [x] On-device verification (real phone, real VPN session)
+- [x] CI: 29-test live suite + Gradle AAR build on every push
+- [ ] Full IPv6 pass-through forwarding (filter/capture already work)
+- [ ] Javadoc/ Dokka published API docs
+- [ ] Maven Central publishing (`io.github.bmjubairdadu:andivert`)
+- [ ] Performance: batched TUN I/O, larger rings, optional relay thread pool
+- [ ] Runtime filter reload without reopening the handle
+
+PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
