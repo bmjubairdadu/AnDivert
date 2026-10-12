@@ -14,6 +14,8 @@ dist/classes/
 .kotlinc.zip
 .kotlinc-out.txt
 .kotlinc-err.txt
+.testapp/
+.zwork/
 
 # IDE
 .idea/
