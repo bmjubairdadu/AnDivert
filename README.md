@@ -1,5 +1,10 @@
 # AnDivert
 
+[![CI](https://github.com/bmjubairdadu/AnDivert/actions/workflows/ci.yml/badge.svg)](https://github.com/bmjubairdadu/AnDivert/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/bmjubairdadu/AnDivert)](https://github.com/bmjubairdadu/AnDivert/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)](https://developer.android.com/about/versions/nougat)
+
 **WinDivert-style user-mode packet interception for Android.**
 
 AnDivert lets an Android app capture / inspect / filter / drop / modify /
@@ -68,9 +73,10 @@ asked to see.
 
 ## Getting it
 
-Two consumption paths, both on the [Releases](../../releases) page:
+Two consumption paths, both on the [Releases](../../releases) page — they
+contain the same engine, packaged for two different audiences:
 
-1. **`andivert-1.0.0.aar`** — drop into your app's `libs/` folder:
+1. **`andivert-1.0.0.aar`** — for app developers (Gradle/Android Studio).
 
    ```gradle
    dependencies {
@@ -80,11 +86,17 @@ Two consumption paths, both on the [Releases](../../releases) page:
 
    The AAR bundles `libandivert.so` for **arm64-v8a, armeabi-v7a, x86_64, x86**
    plus the compiled Kotlin API.
+   > **Plain-Java apps:** the library uses Kotlin types in its public API, so
+   > also add `implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'`
+   > (Kotlin apps get it automatically).
 
-2. **`andivert-1.0.0-release.zip`** — the WinDivert.dll-style raw package:
+2. **`andivert-1.0.0-release.zip`** — for NDK developers / vendors: the
+   WinDivert.dll-style raw package:
    `prebuilt/<abi>/libandivert.so`, `include/andivert.h`, full C source,
-   Kotlin sources and the example app. For developers who want to vendor the
-   C engine into their own NDK build.
+   Kotlin sources and the example app. Use it when you want to vendor the
+   C engine into your own NDK build instead of consuming an AAR.
+
+You only need one of the two — pick by how you build your app.
 
 ## Integration (10 minutes)
 
@@ -240,6 +252,21 @@ echo through the mini proxy. See `andivert/test/ad_test.c`.
 ```
 RESULT: 29 passed, 0 failed
 ```
+
+**On-device verification** — the release AAR was installed on a real phone
+(Mi A2 Lite, Android 11, arm64-v8a) driving a real VPN session:
+
+```
+filter compiled: outbound and udp.DstPort == 53
+engine started
+DNS -> 8.8.8.8    DNS -> 1.1.1.1    DNS -> 4.4.8.8   ... (68 diverted)
+stats: diverted=68 passed=560 dropped=0 in=99KB out=366KB
+ping 8.8.8.8 → 0% packet loss   (internet fully functional during diversion)
+```
+
+Every DNS query from every app on the device surfaced at `onPacket()` and
+was released unchanged — non-matching traffic flowed through the built-in
+forwarding stack with zero drops.
 
 ## Limitations (read before filing issues)
 

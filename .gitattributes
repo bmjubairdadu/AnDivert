@@ -1,0 +1,22 @@
+# Normalize line endings
+* text=auto
+
+# Sources
+*.java text
+*.kt text
+*.c text
+*.h text
+*.xml text
+*.gradle text
+*.md text
+*.py text
+*.sh text eol=lf
+*.yml text eol=lf
+
+# Binaries
+*.jar binary
+*.so binary
+*.apk binary
+*.aar binary
+*.zip binary
+*.png binary

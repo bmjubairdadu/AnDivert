@@ -46,6 +46,9 @@ android {
 }
 
 dependencies {
+    /* Exposed in the public API (AnDivert.kt uses Kotlin types), so `api`:
+       consumers get kotlin-stdlib automatically, even from plain-Java apps. */
+    api 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
     implementation 'androidx.annotation:annotation:1.8.0'
 }
 
